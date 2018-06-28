@@ -113,12 +113,14 @@ public class CartServiceImpl implements ICartService {
     //组装CartVo对象
     public CartVo getCartVoLimit(Integer userId){
         CartVo cartVo = new CartVo();
+        //查询出该用户数据库购物车中的每一条记录
         List<Cart> cartList = cartMapper.selectCartByUserId(userId);
+        //申明一个用于显示购物车数据库记录的集合
         List<CartProductVo> cartProductVoList = Lists.newArrayList();
         BigDecimal cartTotalPrice = new BigDecimal("0");
         if(CollectionUtils.isNotEmpty(cartList)){//该用户购物车中有产品
             for(Cart cart :cartList){//遍历购物车中的产品
-                CartProductVo cartProductVo = new CartProductVo();
+                CartProductVo cartProductVo = new CartProductVo();//准备组装购物车产品视图
                 cartProductVo.setId(cart.getId());
                 cartProductVo.setUserId(userId);
                 cartProductVo.setProductId(cart.getProductId());
@@ -146,7 +148,9 @@ public class CartServiceImpl implements ICartService {
                     }
                     cartProductVo.setQuantity(buyLimitCount);
                     //计算该产品的总价（单价*购物车中该产品的数量）
-                    cartProductVo.setProductTotalPrice(BigDecimalUtil.mul(cartProductVo.getProductPrice().doubleValue(),cartProductVo.getQuantity().doubleValue()));
+                    cartProductVo.setProductTotalPrice(BigDecimalUtil.mul(
+                            cartProductVo.getProductPrice().doubleValue(),
+                            cartProductVo.getQuantity().doubleValue()));
                     cartProductVo.setProductChecked(cart.getChecked());
                 }
                 if(cart.getChecked() == Const.Cart.CHECKED){//如果该产品被选中

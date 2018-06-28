@@ -14,12 +14,13 @@ import java.util.concurrent.TimeUnit;
 public class TokenCache {
     private static Logger logger = LoggerFactory.getLogger(TokenCache.class);
     public static final String TOKEN_PREFIX = "token_";
-
+    //构建guava本地缓存
     private static LoadingCache<String, String> localCache = CacheBuilder
             .newBuilder()
-            .initialCapacity(1000)
+            .initialCapacity(1000)//缓存的初始化容量
+            //最大容量10000      有效期12h
             .maximumSize(10000).expireAfterAccess(12, TimeUnit.HOURS)
-            .build(new CacheLoader<String, String>() {
+            .build(new CacheLoader<String, String>() {//当调用get方法取key时，若key为null时，value返回“null”
                 @Override
                 public String load(String s) throws Exception {
                     return "null";

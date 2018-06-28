@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -47,6 +48,7 @@ public class CategoryServiceImpl implements ICategoryService{
         Category category = new Category();
         category.setId(categoryId);
         category.setName(categoryName);
+        category.setUpdateTime(new Date());
         int count =categoryMapper.updateByPrimaryKeySelective(category);
         if(count > 0){
             return ServerResponse.createBySuccess("更新分类名称成功");
@@ -72,7 +74,6 @@ public class CategoryServiceImpl implements ICategoryService{
             }
         }
         return ServerResponse.createBySuccess(categoryIdList);
-
     }
     //递归查询分类算法
     private Set<Category> findCategoryChildren(Set<Category> categorySet,Integer categoryId){

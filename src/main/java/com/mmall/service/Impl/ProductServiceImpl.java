@@ -83,7 +83,7 @@ public class ProductServiceImpl implements IProductService {
         }
         Product product = productMapper.selectByPrimaryKey(productId);
         if(product == null){
-            return ServerResponse.createByErrorMessage("产品已下架或删除");
+            return ServerResponse.createByErrorMessage("产品已删除");
         }
         //获取VO
         ProductDetailVo productDetailVo = assembleProductDetailVo(product);
@@ -140,7 +140,8 @@ public class ProductServiceImpl implements IProductService {
         return productListVo;
     }
     //后台产品搜索
-    public ServerResponse<PageInfo> searchProduct(String productName,Integer productId,Integer pageNum,Integer pageSize){
+    public ServerResponse<PageInfo> searchProduct(String productName, Integer productId,
+                                                  Integer pageNum, Integer pageSize){
         PageHelper.startPage(pageNum,pageSize);
         if(StringUtils.isNotBlank(productName)){//拼接查询条件like
             productName = new StringBuilder().append("%").append(productName).append("%").toString();
@@ -161,17 +162,21 @@ public class ProductServiceImpl implements IProductService {
         }
         Product product = productMapper.selectByPrimaryKey(productId);
         if(product == null){
-            return ServerResponse.createByErrorMessage("产品已下架或删除");
+            return ServerResponse.createByErrorMessage("产品已删除");
         }
         if(product.getStatus() != Const.ProductStatusEnum.ON_SALE.getCode()){
-            return ServerResponse.createByErrorMessage("产品已下架或删除");
+            return ServerResponse.createByErrorMessage("产品已下架");
         }
         //获取VO
         ProductDetailVo productDetailVo = assembleProductDetailVo(product);
         return ServerResponse.createBySuccess(productDetailVo);
     }
     //前台产品搜索列表(类似淘宝关键词+类目)
-    public ServerResponse<PageInfo> getProductByKeywordAndCategoryId(String keyword,Integer categoryId,int pageNum,int pageSize,String orderBy){
+    public ServerResponse<PageInfo> getProductByKeywordAndCategoryId(String keyword,
+                                                                     Integer categoryId,
+                                                                     int pageNum,
+                                                                     int pageSize,
+                                                                     String orderBy){
         if(StringUtils.isBlank(keyword) && categoryId == null){
             return ServerResponse.createByErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(),ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
@@ -185,7 +190,7 @@ public class ProductServiceImpl implements IProductService {
                 return ServerResponse.createBySuccess(pageInfo);
             }
             //查询所有子孙分类的分类id
-            categoryList = iCategoryService.getCategoryAndDeepChildrenCategory(category.getId()).getData();
+            categoryList = iCategoryService.getCategoryAndDeepChildrenCategory(categoryId).getData();
         }
         if(StringUtils.isNotBlank(keyword)){
             keyword = new StringBuffer().append("%").append(keyword).append("%").toString();

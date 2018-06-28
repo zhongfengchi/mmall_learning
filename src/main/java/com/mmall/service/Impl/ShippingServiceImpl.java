@@ -44,7 +44,8 @@ public class ShippingServiceImpl implements IShippingService {
     }
     //更新收货地址
     public ServerResponse<String> update(Shipping shipping,Integer userId){
-        shipping.setUserId(userId);//此处再次将userId（当前登录用户的）赋予shipping是为了防止从其他途径传入userId
+        //此处再次将userId（当前登录用户的）赋予shipping是为了防止从其他途径传入userId
+        shipping.setUserId(userId);
         int count = shippingMapper.updateShippingByIdAndUserId(shipping);
         if(count > 0){
             return ServerResponse.createBySuccess("更新收货地址成功");

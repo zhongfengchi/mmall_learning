@@ -83,7 +83,9 @@ public class ProductManageController {
     //后台产品分页列表
     @RequestMapping("list.do")
     @ResponseBody
-    public ServerResponse getList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ServerResponse getList(HttpSession session,
+                                  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                  @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
@@ -114,17 +116,19 @@ public class ProductManageController {
     //文件上传
     @RequestMapping("upload.do")
     @ResponseBody
-    public ServerResponse upload(HttpSession session, @RequestParam(value="file",required = false) MultipartFile multipartFile, HttpServletRequest request){
+    public ServerResponse upload(HttpSession session,
+                                 @RequestParam(value="file",required = false) MultipartFile multipartFile,
+                                 HttpServletRequest request){
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ServerResponse.createByErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), "用户未登录");
         }
         if (iUserService.checkAdminRole(user).isSuccess()) {
             //获取指定路径在服务器上的路径
-            String path = request.getSession().getServletContext().getRealPath("upload");
+            String path = session.getServletContext().getRealPath("upload");
             String targetFile = iFileService.upload(multipartFile, path);
 
-            String url = "ftp://" + PropertiesUtil.getProperty("ftp.server.ip") + "/image/" + targetFile;
+            String url = "ftp://" + PropertiesUtil.getProperty("ftp.server.ip") + "/" + targetFile;
             Map map = Maps.newHashMap();
             map.put("uri",targetFile);
             map.put("url",url);
